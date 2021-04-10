@@ -160,8 +160,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "dart2.13"
-      resolved-ref: dc39d914877d161e92807e8623ceab8943822951
+      ref: HEAD
+      resolved-ref: "0a696beea76059e06ad0e07c8f8337410dc49a17"
       url: "https://github.com/timsneath/win32.git"
     source: git
     version: "2.1.0"

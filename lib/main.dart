@@ -32,8 +32,8 @@ String printMidiDevices() {
   return result;
 }
 
-void onMidiData(Pointer<IntPtr> hMidiIn, int wMsg, int dwInstance, int dwParam1,
-    int dwParam2) {
+void onMidiData(
+    int hMidiIn, int wMsg, int dwInstance, int dwParam1, int dwParam2) {
   switch (wMsg) {
     case MIM_OPEN:
       print('wMsg=MIM_OPEN\n');
@@ -62,9 +62,6 @@ void onMidiData(Pointer<IntPtr> hMidiIn, int wMsg, int dwInstance, int dwParam1,
       break;
   }
 }
-
-typedef MIDICALLBACK = Void Function(Pointer<IntPtr> hMidiIn, Uint32 wMsg,
-    IntPtr dwInstance, IntPtr dwParam1, IntPtr dwParam2);
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -108,8 +105,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final hMidiDevice = calloc<IntPtr>();
-  final pointer = Pointer.fromFunction<MIDICALLBACK>(onMidiData);
+  final hMidiDevicePtr = calloc<IntPtr>();
+  final pointer = Pointer.fromFunction<MidiInProc>(onMidiData);
   final nMidiDeviceNum = 1;
 
   @override
@@ -117,17 +114,17 @@ class _MyHomePageState extends State<MyHomePage> {
     // TODO: implement dispose
     super.dispose();
 
-    midiInStop(hMidiDevice.value);
-    midiInClose(hMidiDevice.value);
-    free(hMidiDevice);
+    midiInStop(hMidiDevicePtr.value);
+    midiInClose(hMidiDevicePtr.value);
+    free(hMidiDevicePtr);
     free(pointer);
   }
 
   void onConnect() {
     print(
-        'about to open midi connection. Currently, hMidiDevice is: ${hMidiDevice.address}');
-    final rv = midiInOpen(
-        hMidiDevice, nMidiDeviceNum, pointer.address, 0, CALLBACK_FUNCTION);
+        'about to open midi connection. Currently, hMidiDevice is: ${hMidiDevicePtr.address}');
+    final rv = midiInOpen(hMidiDevicePtr, nMidiDeviceNum, GetCurrentThread(), 0,
+        CALLBACK_FUNCTION);
     switch (rv) {
       case MMSYSERR_NOERROR:
         print('midiInOpen() successfull!');
@@ -143,10 +140,10 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     if (rv == MMSYSERR_NOERROR) {
-      final rs = midiInStart(hMidiDevice.value);
+      final rs = midiInStart(hMidiDevicePtr.value);
       if (rs == MMSYSERR_INVALHANDLE) {
         print(
-            'midiInStart() failed! device handle \'${hMidiDevice.value}\' is wrong');
+            'midiInStart() failed! device handle \'${hMidiDevicePtr.value}\' is wrong');
       } else if (rs == MMSYSERR_NOERROR) {
         print('midiInStart() successfull');
       }
