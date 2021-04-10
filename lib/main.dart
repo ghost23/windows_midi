@@ -106,7 +106,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final hMidiDevicePtr = calloc<IntPtr>();
-  final pointer = Pointer.fromFunction<MidiInProc>(onMidiData);
+  final pOnMidiDataFunc = Pointer.fromFunction<MidiInProc>(onMidiData);
   final nMidiDeviceNum = 1;
 
   @override
@@ -117,14 +117,14 @@ class _MyHomePageState extends State<MyHomePage> {
     midiInStop(hMidiDevicePtr.value);
     midiInClose(hMidiDevicePtr.value);
     free(hMidiDevicePtr);
-    free(pointer);
+    free(pOnMidiDataFunc);
   }
 
   void onConnect() {
     print(
         'about to open midi connection. Currently, hMidiDevice is: ${hMidiDevicePtr.address}');
-    final rv = midiInOpen(hMidiDevicePtr, nMidiDeviceNum, GetCurrentThread(), 0,
-        CALLBACK_FUNCTION);
+    final rv = midiInOpen(hMidiDevicePtr, nMidiDeviceNum,
+        pOnMidiDataFunc.address, 0, CALLBACK_FUNCTION);
     switch (rv) {
       case MMSYSERR_NOERROR:
         print('midiInOpen() successfull!');
