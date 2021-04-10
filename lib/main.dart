@@ -123,14 +123,15 @@ class _MyHomePageState extends State<MyHomePage> {
     // TODO: implement dispose
     super.dispose();
 
-    midiInStop(hMidiDevice.address);
-    midiInClose(hMidiDevice.address);
+    midiInStop(hMidiDevice.value);
+    midiInClose(hMidiDevice.value);
     free(hMidiDevice);
     free(pointer);
   }
 
   void onConnect() {
-    final rv = midiInOpen(hMidiDevice, nMidiDeviceNum, pointer.address, 0, CALLBACK_FUNCTION); //
+    print('about to open midi connection. Currently, hMidiDevice is: ${hMidiDevice.address}');
+    final rv = midiInOpen(hMidiDevice, nMidiDeviceNum, pointer.address, 0, CALLBACK_FUNCTION);
     switch(rv) {
       case MMSYSERR_NOERROR: print('midiInOpen() successfull!'); break;
       case MMSYSERR_ALLOCATED: print('midiInOpen() failed! Device already in use.'); break;
@@ -139,9 +140,9 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     if(rv == MMSYSERR_NOERROR) {
-      final rs = midiInStart(hMidiDevice.address);
+      final rs = midiInStart(hMidiDevice.value);
       if(rs == MMSYSERR_INVALHANDLE) {
-        print('midiInStart() failed! device handle is wrong');
+        print('midiInStart() failed! device handle \'${hMidiDevice.value}\' is wrong');
       } else if(rs == MMSYSERR_NOERROR) {
         print('midiInStart() successfull');
       }
