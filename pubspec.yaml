@@ -30,9 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   win32:
-    git:
-      url: https://github.com/timsneath/win32.git
-      ref: dart2.13
+    git: https://github.com/timsneath/win32.git
 
 dev_dependencies:
   flutter_test:

@@ -8,14 +8,6 @@ void main() {
   runApp(MyApp());
 }
 
-String convertUint16ArrayToString(Array<Uint16> array, int size) {
-  final charCodes = <int>[];
-  for (var i = 0; i < size; i++) {
-    charCodes.add(array[i]);
-  }
-  return String.fromCharCodes(charCodes);
-}
-
 String printMidiDevices() {
   String result = '';
   int nMidiDeviceNum;
@@ -30,7 +22,7 @@ String printMidiDevices() {
   result += '== PrintMidiDevices() == \n';
   for (int i = 0; i < nMidiDeviceNum; ++i) {
     midiInGetDevCaps(i, caps, sizeOf<MIDIINCAPS>());
-    var name = convertUint16ArrayToString(caps.ref.szPname, 32);
+    var name = caps.ref.szPname;
     result += '$i : name = $name\n';
   }
   result += '=====\n';
@@ -42,25 +34,25 @@ String printMidiDevices() {
 
 void onMidiData(Pointer<IntPtr> hMidiIn, int wMsg, int dwInstance, int dwParam1, int dwParam2) {
   switch(wMsg) {
-    case 961:
+    case MIM_OPEN:
       print('wMsg=MIM_OPEN\n');
       break;
-    case 962:
+    case MIM_CLOSE:
       print('wMsg=MIM_CLOSE\n');
       break;
-    case 963:
+    case MIM_DATA:
       print('wMsg=MIM_DATA, dwInstance=$dwInstance, dwParam1=$dwParam1, dwParam2=$dwParam2\n');
       break;
-    case 964:
+    case MIM_LONGDATA:
       print('wMsg=MIM_LONGDATA\n');
       break;
-    case 965:
+    case MIM_ERROR:
       print('wMsg=MIM_ERROR\n');
       break;
-    case 966:
+    case MIM_LONGDATA:
       print('wMsg=MIM_LONGERROR\n');
       break;
-    case 972:
+    case MIM_MOREDATA:
       print('wMsg=MIM_MOREDATA\n');
       break;
     default:
@@ -116,7 +108,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final hMidiDevice = calloc<IntPtr>();
   final pointer = Pointer.fromFunction<MIDICALLBACK>(onMidiData);
   final nMidiDeviceNum = 1;
-  final CALLBACK_FUNCTION = 196608;
 
   @override
   void dispose() {
