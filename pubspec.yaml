@@ -31,7 +31,6 @@ dependencies:
 
   win32:
     git: https://github.com/timsneath/win32.git
-    
 
 dev_dependencies:
   flutter_test:
